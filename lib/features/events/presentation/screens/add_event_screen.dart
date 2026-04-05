@@ -285,8 +285,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
       final eventRepo = ref.read(eventRepositoryProvider);
       await eventRepo.insertEvent(event);
 
-      // Save per-event target settings
+      // Save per-event target settings and collect saved entities
       final formState = ref.read(eventFormProvider);
+      final savedSettings = <EventTargetSettingsEntity>[];
       for (final settings in formState.targetSettings) {
         final s = EventTargetSettingsEntity(
           id: uuid.v4(),
@@ -298,26 +299,12 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
           applyWorkHoursRule: settings.applyWorkHoursRule,
         );
         await eventRepo.insertTargetSettings(s);
+        savedSettings.add(s);
       }
 
-      // Run sync engine
+      // Run sync engine using the already-saved settings
       final syncEngine = ref.read(syncEngineProvider);
-      await syncEngine.processEvent(
-        event,
-        targetSettings: formState.targetSettings
-            .map(
-              (s) => EventTargetSettingsEntity(
-                id: uuid.v4(),
-                eventId: eventId,
-                targetCalendarId: s.targetCalendarId,
-                mode: s.mode,
-                overrideRule: s.overrideRule,
-                hideDetails: s.hideDetails,
-                applyWorkHoursRule: s.applyWorkHoursRule,
-              ),
-            )
-            .toList(),
-      );
+      await syncEngine.processEvent(event, targetSettings: savedSettings);
 
       // Reset form
       ref.read(eventFormProvider.notifier).reset();
