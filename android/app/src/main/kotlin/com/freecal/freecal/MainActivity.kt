@@ -1,0 +1,5 @@
+package com.freecal.freecal
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
