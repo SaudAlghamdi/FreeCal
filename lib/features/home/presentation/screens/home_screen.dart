@@ -5,8 +5,10 @@ import '../../../calendars/data/models/calendar_model.dart';
 import '../../../calendars/presentation/providers/calendar_notifier.dart';
 import '../../../events/data/models/event_model.dart';
 import '../../../events/presentation/providers/event_notifier.dart';
+import '../../../conflicts/presentation/screens/conflict_screen.dart';
 import '../../../events/presentation/screens/add_event_screen.dart';
 import '../../../events/presentation/screens/event_details_screen.dart';
+import '../../../sync_rules/presentation/screens/rules_screen.dart';
 import '../widgets/calendar_filter_bar.dart';
 import '../widgets/day_view.dart';
 import '../widgets/week_view.dart';
@@ -42,6 +44,25 @@ class HomeScreen extends ConsumerWidget {
             onPressed: () {
               ref.read(_selectedDateProvider.notifier).state = DateTime.now();
             },
+          ),
+          // Overflow menu
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              switch (value) {
+                case 'rules':
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const RulesScreen()));
+                  break;
+                case 'conflicts':
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const ConflictScreen()));
+                  break;
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'rules', child: Text('Sync Rules')),
+              PopupMenuItem(value: 'conflicts', child: Text('Conflicts')),
+            ],
           ),
         ],
       ),
