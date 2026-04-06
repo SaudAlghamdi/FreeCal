@@ -5,6 +5,7 @@ import 'package:freecal/features/events/presentation/screens/add_event_screen.da
 import 'package:freecal/features/events/presentation/screens/event_details_screen.dart';
 import 'package:freecal/features/rules/presentation/screens/rules_screen.dart';
 import 'package:freecal/features/conflicts/presentation/screens/conflict_screen.dart';
+import 'package:freecal/features/settings/presentation/screens/settings_screen.dart';
 
 /// Application route paths.
 abstract class AppRoutes {
@@ -13,6 +14,7 @@ abstract class AppRoutes {
   static const String eventDetails = '/event/:id';
   static const String rules = '/rules';
   static const String conflicts = '/conflicts';
+  static const String settings = '/settings';
 }
 
 /// The GoRouter instance for the application.
@@ -51,6 +53,12 @@ final GoRouter appRouter = GoRouter(
       name: 'conflicts',
       builder: (BuildContext context, GoRouterState state) =>
           const ConflictScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      name: 'settings',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SettingsScreen(),
     ),
   ],
   errorBuilder: (BuildContext context, GoRouterState state) => Scaffold(

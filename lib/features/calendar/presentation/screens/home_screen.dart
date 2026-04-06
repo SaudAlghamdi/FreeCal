@@ -42,6 +42,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             tooltip: 'Conflicts',
             onPressed: () => context.push('/conflicts'),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => context.push('/settings'),
+          ),
         ],
       ),
       body: Column(

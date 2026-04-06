@@ -8,7 +8,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static const String _databaseName = 'freecal.db';
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
 
   Database? _database;
 
@@ -34,6 +34,7 @@ class DatabaseHelper {
     await db.execute(_createMirrorLinksTable);
     await db.execute(_createSyncRulesTable);
     await db.execute(_createEventTargetSettingsTable);
+    await db.execute(_createLinkedAccountsTable);
     await _insertDefaultData(db);
   }
 
@@ -42,7 +43,9 @@ class DatabaseHelper {
     int oldVersion,
     int newVersion,
   ) async {
-    // Future migrations will be handled here.
+    if (oldVersion < 2) {
+      await db.execute(_createLinkedAccountsTable);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -109,6 +112,16 @@ class DatabaseHelper {
       applyWorkHoursRule INTEGER NOT NULL DEFAULT 0,
       FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE,
       FOREIGN KEY (targetCalendarId) REFERENCES calendars(id) ON DELETE CASCADE
+    )
+  ''';
+
+  static const String _createLinkedAccountsTable = '''
+    CREATE TABLE IF NOT EXISTS linked_accounts (
+      id TEXT PRIMARY KEY NOT NULL,
+      providerKey TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL,
+      isConnected INTEGER NOT NULL DEFAULT 0,
+      lastSyncAt INTEGER
     )
   ''';
 
@@ -180,5 +193,6 @@ class DatabaseHelper {
     await db.delete('sync_rules');
     await db.delete('events');
     await db.delete('calendars');
+    await db.delete('linked_accounts');
   }
 }
